@@ -1,5 +1,6 @@
 package xyz.codingdaddy.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,7 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -18,9 +20,15 @@ import xyz.codingdaddy.repository.UserRepository;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integration tests for {@link UserController}
+ *
+ * @author serhiy
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
@@ -60,11 +68,30 @@ public class UserControllerTest {
 
     @Test
     public void testGetUsers() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/users"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(3))
                 .andExpect(jsonPath("$[0].username").value("bob"))
                 .andExpect(jsonPath("$[1].username").value("alice"))
                 .andExpect(jsonPath("$[2].username").value("gordon"));
+    }
+
+    @Test
+    public void testCreateUser() throws Exception {
+        User user = new User();
+        user.setUsername("john");
+        user.setPassword("7777");
+        user.setEmail("john@example.com");
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(user)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(4))
+                .andExpect(jsonPath("$.username").value("john"))
+                .andExpect(jsonPath("$.password").value("7777"))
+                .andExpect(jsonPath("$.email").value("john@example.com"));
     }
 }

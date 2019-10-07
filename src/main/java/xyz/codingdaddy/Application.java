@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import xyz.codingdaddy.repository.UserRepository;
 
 /**
- * Thymeleaf String Boot application example
+ * JUnit String Boot application example
  *
  * @author serhiy
  */

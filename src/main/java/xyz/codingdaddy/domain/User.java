@@ -6,6 +6,8 @@ import javax.persistence.Id;
 
 /**
  * User domain object
+ *
+ * @author serhiy
  */
 @Entity(name="users")
 public class User {
