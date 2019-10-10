@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * REST API Controller for {@link xyz.codingdaddy.domain.User} entity
  *
- * @author sboychen
+ * @author serhiy
  */
 @RestController
 @RequestMapping(value = "/api/user", produces = {MediaType.APPLICATION_JSON_VALUE})
